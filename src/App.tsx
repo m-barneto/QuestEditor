@@ -6,7 +6,9 @@ import { QuestDataProvider } from './contexts/QuestDataContext';
 
 import 'primereact/resources/themes/bootstrap4-dark-blue/theme.css';
 import './style.css';
+import 'primeicons/primeicons.css';
 import QuestListView from './components/QuestListView';
+import QuestEditorHeader from './components/QuestEditorHeader';
 
 interface JsonData {
   name: string;
@@ -33,6 +35,7 @@ const App: React.FC = () => {
       <pre>{JSON.stringify(jsonData, null, 2)}</pre>
       <QuestDataProvider>
         <SelectedQuestProvider>
+          <QuestEditorHeader></QuestEditorHeader>
           <Splitter style={{ minHeight: '100%' }}>
             <SplitterPanel className="flex align-items-center justify-content-center" style={{maxWidth: '30%'}}>
               <QuestListView/>
