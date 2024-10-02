@@ -8,6 +8,7 @@ import 'primereact/resources/themes/bootstrap4-dark-blue/theme.css';
 import './style.css';
 import 'primeicons/primeicons.css';
 import QuestListView from './components/QuestListView';
+import QuestEditorView from './components/QuestEditorView';
 import QuestEditorHeader from './components/QuestEditorHeader';
 
 interface JsonData {
@@ -29,18 +30,17 @@ const App: React.FC = () => {
   };
 
   return (
-    <main style={{ paddingLeft: '15%', paddingRight: '15%', minHeight: '1000px' }}>
-      <h1>JSON Editor</h1>
-      <JsonForm initialData={jsonData} onSubmit={handleFormSubmit} />
-      <pre>{JSON.stringify(jsonData, null, 2)}</pre>
+    <main style={{ paddingLeft: '15%', paddingRight: '15%', height: '1000px' }}>
       <QuestDataProvider>
         <SelectedQuestProvider>
-          <QuestEditorHeader></QuestEditorHeader>
-          <Splitter style={{ minHeight: '100%' }}>
+          <QuestEditorHeader />
+          <Splitter style={{ height: '100%' }}>
             <SplitterPanel className="flex align-items-center justify-content-center" style={{maxWidth: '30%'}}>
               <QuestListView/>
             </SplitterPanel>
-            <SplitterPanel className="flex align-items-center justify-content-center">Panel 2</SplitterPanel>
+            <SplitterPanel className="flex align-items-center justify-content-center">
+              <QuestEditorView />
+            </SplitterPanel>
           </Splitter>
         </SelectedQuestProvider>
       </QuestDataProvider>

@@ -14,11 +14,11 @@ export default function QuestListView() {
 
     return quests !== undefined ? (
         <div style={{ height: '100%', width: '100%' }}>
-            <ListBox filter style={{ width: '100%' }} listStyle={{ height: '800px' }} 
+            <ListBox filter style={{ width: '100%', height: '100%' }} listStyle={{ height: 'calc(100% - 64px)' }}
                 options={Object.values(quests)}
                 value={selectedQuest}
                 onChange={(e) => {setSelectedQuest(e.value as IQuest)}}
-                optionLabel="QuestName" 
+                optionLabel="QuestName"
                 className="w-full md:w-14rem"
             />
         </div>
