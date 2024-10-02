@@ -59,6 +59,6 @@ export default function QuestEditorHeader() {
     );
 
     return (
-        <Toolbar start={startContent} end={endContent} />
+        <Toolbar start={startContent} end={endContent} style={{ marginBottom: "8px" }}/>
     )
 }
