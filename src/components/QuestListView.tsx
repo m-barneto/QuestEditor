@@ -4,8 +4,10 @@ import { SelectedQuestContext } from '../contexts/SelectedQuestContext';
 import { QuestDataContext } from '../contexts/QuestDataContext';
 
 import questJson from "../data/quests.json";
+import localeJson from "../data/locale.json";
 import { IQuest } from '../types/models/eft/common/tables/IQuest';
 import { QuestListboxContext } from '../contexts/QuestListboxContext';
+import { LocaleContext } from '../contexts/LocaleContext';
 
 const questData: Record<string, IQuest> = questJson;
 
@@ -14,11 +16,15 @@ interface QuestInfo {
     id: string
 }
 
+const localeData: Record<string, string> = localeJson;
+
 export default function QuestListView() {
     const { selectedQuestId, setSelectedQuestId } = useContext(SelectedQuestContext)!;
     const { quests, setQuests } = useContext(QuestDataContext)!;
     const { canSelectQuest } = useContext(QuestListboxContext)!;
     const [ questNames, setQuestNames ] = useState<QuestInfo[]>([]);
+
+    const { setLocales } = useContext(LocaleContext)!;
 
     useEffect(() => {
         const nameAndId: QuestInfo[] = [];
@@ -51,7 +57,10 @@ export default function QuestListView() {
         </div>
     ) : (
         <div style={{ height: '100%', width: '100%' }}>
-            <button onClick={ () => setQuests(questData) }>Load</button>
+            <button onClick={ () => {
+                setQuests(questData);
+                setLocales(localeData);
+            }}>Load</button>
         </div>
     )
 }

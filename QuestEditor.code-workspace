@@ -1,14 +1,14 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {
-		"[typescriptreact]": {
-			"editor.codeActionsOnSave": {
-				"source.fixAll.eslint": true
-			}
-		}
-	},
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "settings": {
+    "[typescriptreact]": {
+      "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit"
+      }
+    }
+  }
 }

@@ -10,26 +10,32 @@ import QuestListView from './components/QuestListView';
 import QuestEditorView from './components/QuestEditorView';
 import QuestEditorHeader from './components/QuestEditorHeader';
 import { QuestListboxProvider } from './contexts/QuestListboxContext';
+import { LocaleProvider } from './contexts/LocaleContext';
+import { UserLayoutProvider } from './contexts/UserLayoutContext';
 
 
 const App: React.FC = () => {
     return (
         <main style={{ paddingLeft: '15%', paddingRight: '15%', height: '1000px' }}>
-            <QuestDataProvider>
-                <SelectedQuestProvider>
-                    <QuestListboxProvider>
-                        <QuestEditorHeader />
-                        <Splitter style={{ height: '100%' }}>
-                            <SplitterPanel className="flex flex-row" style={{maxWidth: '30%', width: "200px"}}>
-                                <QuestListView/>
-                            </SplitterPanel>
-                            <SplitterPanel>
-                                <QuestEditorView />
-                            </SplitterPanel>
-                        </Splitter>
-                    </QuestListboxProvider>
-                </SelectedQuestProvider>
-            </QuestDataProvider>
+            <UserLayoutProvider>
+                <QuestDataProvider>
+                    <LocaleProvider>
+                        <SelectedQuestProvider>
+                            <QuestListboxProvider>
+                                <QuestEditorHeader />
+                                <Splitter style={{ height: '100%' }}>
+                                    <SplitterPanel className="flex flex-row" style={{maxWidth: '30%', width: "200px"}}>
+                                        <QuestListView/>
+                                    </SplitterPanel>
+                                    <SplitterPanel>
+                                        <QuestEditorView />
+                                    </SplitterPanel>
+                                </Splitter>
+                            </QuestListboxProvider>
+                        </SelectedQuestProvider>
+                    </LocaleProvider>
+                </QuestDataProvider>
+            </UserLayoutProvider>
         </main>
     );
 };
