@@ -12,11 +12,13 @@ import QuestEditorHeader from './components/QuestEditorHeader';
 import { QuestListboxProvider } from './contexts/QuestListboxContext';
 import { LocaleProvider } from './contexts/LocaleContext';
 import { UserLayoutProvider } from './contexts/UserLayoutContext';
+import { useState } from 'react';
 
 
 const App: React.FC = () => {
+    const [ height ] = useState<string>(`${screen.availHeight * 0.83}px`)
     return (
-        <main style={{ paddingLeft: '15%', paddingRight: '15%', height: '1000px' }}>
+        <main style={{ paddingLeft: '15%', paddingRight: '15%', height: height }}>
             <UserLayoutProvider>
                 <QuestDataProvider>
                     <LocaleProvider>
