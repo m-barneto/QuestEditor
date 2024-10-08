@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useRef, useState } from "react"
+import { FC, useContext, useEffect, useState } from "react"
 import { IQuest } from "../types/models/eft/common/tables/IQuest"
 import { Divider } from 'primereact/divider';
 import { InputText } from 'primereact/inputtext';
@@ -17,10 +17,8 @@ import { LocaleContext } from "../contexts/LocaleContext";
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { UserLayoutContext } from "../contexts/UserLayoutContext";
 import { Checkbox } from 'primereact/checkbox';
-import { Toolbar } from "primereact/toolbar";
-import React from "react";
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
+import { DataView, DataViewLayoutOptions } from 'primereact/dataview';
+import { listTemplate, rewardTemplate } from "./RewardTemplate";
 
 interface QuestEditorFormProps {
     initialQuestData: string | undefined,
@@ -107,12 +105,6 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
             setLocales(tempLocales);
         }
     }
-
-    const header = (
-        <div className="flex flex-wrap align-items-center justify-content-between gap-2">
-            <Button icon="pi pi-refresh" rounded raised />
-        </div>
-    );
 
     return (
         <div style={{ padding: "10px" }}>
@@ -271,20 +263,22 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
                     <TabPanel header="Rewards">
                         <Accordion style={{ paddingTop: "1rem", paddingBottom: "1rem" }} multiple>
                             <AccordionTab header="Started">
-                                <Button icon="pi pi-plus-circle" severity='success' tooltip="New Quest" raised>&nbsp;&nbsp;Add Reward</Button>
-                                <DataTable value={quest.rewards.Success} header={header}>
-                                    <Column field="id" header="Name"></Column>
-                                    <Column field="type" header="Category"></Column>
-                                </DataTable>
+                                <Button icon="pi pi-plus-circle" severity='success' tooltip="Add Reward" raised>&nbsp;&nbsp;Add Reward</Button>
+                                <DataView value={quest.rewards.Started} listTemplate={listTemplate}>
+                                </DataView>
                             </AccordionTab>
                             <AccordionTab header="Success">
-                                
+                                <Button icon="pi pi-plus-circle" severity='success' tooltip="Add Reward" raised>&nbsp;&nbsp;Add Reward</Button>
+                                <DataView value={quest.rewards.Success} listTemplate={listTemplate}>
+                                </DataView>
                             </AccordionTab>
                             <AccordionTab header="Fail">
-                                
+                                <Button icon="pi pi-plus-circle" severity='success' tooltip="Add Reward" raised>&nbsp;&nbsp;Add Reward</Button>
+                                <DataView value={quest.rewards.Fail} listTemplate={listTemplate}>
+                                </DataView>
                             </AccordionTab>
                         </Accordion>
-{/*                        <Divider/>
+                        {/*                        <Divider/>
 
                         <Accordion style={{ paddingTop: "1rem" }} multiple>
                             <AccordionTab header="AvailableForStart">

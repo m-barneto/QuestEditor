@@ -16,20 +16,19 @@ import { useState } from 'react';
 
 
 const App: React.FC = () => {
-    const [ height ] = useState<string>(`${screen.availHeight * 0.83}px`)
     return (
-        <main style={{ paddingLeft: '15%', paddingRight: '15%', height: height }}>
+        <main>
             <UserLayoutProvider>
                 <QuestDataProvider>
                     <LocaleProvider>
                         <SelectedQuestProvider>
                             <QuestListboxProvider>
                                 <QuestEditorHeader />
-                                <Splitter style={{ height: '100%' }}>
-                                    <SplitterPanel className="flex flex-row" style={{maxWidth: '30%', width: "200px"}}>
+                                <Splitter>
+                                    <SplitterPanel className="flex flex-row" size={15}>
                                         <QuestListView/>
                                     </SplitterPanel>
-                                    <SplitterPanel>
+                                    <SplitterPanel minSize={60}>
                                         <QuestEditorView />
                                     </SplitterPanel>
                                 </Splitter>

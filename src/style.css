@@ -4,4 +4,12 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-  
+
+main {
+    height: 95vh;
+    padding: 0 15%;
+}
+
+.p-splitter {
+    height: 90%;
+}
