@@ -1,14 +1,14 @@
 import React, { createContext, useMemo, useState } from 'react'
 
 interface UserLayoutContextType {
-    localeActiveIndices: number[];
-    setLocaleActiveIndices: React.Dispatch<React.SetStateAction<number[]>>;
+  localeActiveIndices: number[];
+  setLocaleActiveIndices: React.Dispatch<React.SetStateAction<number[]>>;
 
-    questTabIndex: number;
-    setQuestTabIndex: React.Dispatch<React.SetStateAction<number>>;
+  questTabIndex: number;
+  setQuestTabIndex: React.Dispatch<React.SetStateAction<number>>;
 
-    rewardsActiveIndices: number[];
-    setRewardsActiveIndices: React.Dispatch<React.SetStateAction<number[]>>;
+  rewardsActiveIndices: number[];
+  setRewardsActiveIndices: React.Dispatch<React.SetStateAction<number[]>>;
 }
 
 export const UserLayoutContext = createContext<UserLayoutContextType | undefined>(undefined);
@@ -25,7 +25,7 @@ export const UserLayoutProvider: React.FC<{ children: React.ReactNode }> = ({
     return {
       localeActiveIndices,
       setLocaleActiveIndices,
-      
+
       rewardsActiveIndices,
       setRewardsActiveIndices,
 
@@ -35,7 +35,7 @@ export const UserLayoutProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [localeActiveIndices, rewardsActiveIndices, questTabIndex]);
 
   return (
-    <UserLayoutContext.Provider value={ contextValue }>
+    <UserLayoutContext.Provider value={contextValue}>
       {children}
     </UserLayoutContext.Provider>
   );

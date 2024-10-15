@@ -3,8 +3,8 @@ import React, { createContext, useEffect, useMemo, useState } from 'react'
 import { IQuest } from '../types/models/eft/common/tables/IQuest';
 
 interface QuestDataContextType {
-    quests: Record<string, IQuest> | undefined;
-    setQuests: React.Dispatch<React.SetStateAction<Record<string, IQuest> | undefined>>;
+  quests: Record<string, IQuest> | undefined;
+  setQuests: React.Dispatch<React.SetStateAction<Record<string, IQuest> | undefined>>;
 }
 
 export const QuestDataContext = createContext<QuestDataContextType | undefined>(undefined);
@@ -23,7 +23,7 @@ export const QuestDataProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [quests]);
 
   return (
-    <QuestDataContext.Provider value={ contextValue }>
+    <QuestDataContext.Provider value={contextValue}>
       {children}
     </QuestDataContext.Provider>
   );

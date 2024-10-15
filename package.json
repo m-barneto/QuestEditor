@@ -19,7 +19,8 @@
     "react-dom": "^18.3.1",
     "react-final-form": "^6.5.9",
     "react-hook-form": "^7.53.0",
-    "use-debounce": "^10.0.3"
+    "use-debounce": "^10.0.3",
+    "vite-tsconfig-paths": "^5.0.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

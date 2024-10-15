@@ -3,13 +3,13 @@ import { IQuest } from '../types/models/eft/common/tables/IQuest';
 
 
 interface SelectedQuestContextType {
-    selectedQuestId: string | undefined;
-    setSelectedQuestId: React.Dispatch<React.SetStateAction<string | undefined>>;
+  selectedQuestId: string | undefined;
+  setSelectedQuestId: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 export const SelectedQuestContext = createContext<SelectedQuestContextType>({
-    selectedQuestId: undefined,
-    setSelectedQuestId: () => undefined
+  selectedQuestId: undefined,
+  setSelectedQuestId: () => undefined
 });
 
 

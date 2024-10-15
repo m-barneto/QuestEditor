@@ -1,8 +1,8 @@
 import React, { createContext, useMemo, useState } from 'react'
 
 interface LocaleContextType {
-    locales: Record<string, string> | undefined;
-    setLocales: React.Dispatch<React.SetStateAction<Record<string, string> | undefined>>;
+  locales: Record<string, string> | undefined;
+  setLocales: React.Dispatch<React.SetStateAction<Record<string, string> | undefined>>;
 }
 
 export const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
@@ -21,7 +21,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [locales]);
 
   return (
-    <LocaleContext.Provider value={ contextValue }>
+    <LocaleContext.Provider value={contextValue}>
       {children}
     </LocaleContext.Provider>
   );
