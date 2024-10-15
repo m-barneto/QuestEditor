@@ -1,16 +1,16 @@
 import { IQuest } from "../types/models/eft/common/tables/IQuest";
-import { ObjectId } from 'bson';
 import { QuestTypeEnum } from "../types/models/enums/QuestTypeEnum";
+import ObjectId from "bson-objectid";
 
 export const CreateEmptyQuest = (traderId: string): IQuest => {
-    const mongoId = new ObjectId().id.toString();
+    const mongoId = new ObjectId().toHexString();
     const quest: IQuest = {
         _id: mongoId,
         canShowNotificationsInGame: true,
         conditions: {
             AvailableForFinish: [],
             AvailableForStart: [],
-            Fail: []
+            Fail: [],
         },
         description: `${mongoId} description`,
         failMessageText: `${mongoId} failMessageText`,
@@ -30,7 +30,6 @@ export const CreateEmptyQuest = (traderId: string): IQuest => {
         changeQuestMessageText: `${mongoId} changeQuestMessageText`,
         side: "Pmc",
         rewards: {},
-
     };
 
     return quest;

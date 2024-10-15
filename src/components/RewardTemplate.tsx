@@ -6,9 +6,12 @@ import { Button } from "primereact/button";
 import { FC, useContext } from "react";
 import { LocaleContext } from "../contexts/LocaleContext";
 import { TraderContext } from "../contexts/TraderContext";
+import { RewardEvent } from "./QuestEditorForm";
 
 interface RewardListProps {
     rewards: IQuestReward[] | undefined;
+    showRewardEditor: (reward: IQuestReward, rewardEventType: RewardEvent) => void;
+    rewardEventType: RewardEvent;
 }
 
 export const RewardList: FC<RewardListProps> = (props): JSX.Element => {
@@ -17,7 +20,14 @@ export const RewardList: FC<RewardListProps> = (props): JSX.Element => {
     return (
         <div className="grid grid-nogutter">
             {props.rewards?.map((reward, index) => {
-                return rewardTemplate(reward, index, locales!, traders!);
+                return rewardTemplate(
+                    reward,
+                    index,
+                    locales!,
+                    traders!,
+                    props.showRewardEditor,
+                    props.rewardEventType
+                );
             })}
         </div>
     );
@@ -27,7 +37,9 @@ export const rewardTemplate = (
     reward: IQuestReward,
     index: number,
     locales: Record<string, string>,
-    traders: Record<string, string>
+    traders: Record<string, string>,
+    showRewardEditor: (reward: IQuestReward, rewardEventType: RewardEvent) => void,
+    rewardEventType: RewardEvent
 ) => {
     const getImage = (reward: IQuestReward): string => {
         switch (reward.type) {
@@ -40,7 +52,7 @@ export const rewardTemplate = (
             case "TraderUnlock":
                 return "https://static.wikia.nocookie.net/lego-videogames/images/c/c8/Stranger_1.png";
             case "Item":
-                return `https://assets.tarkov.dev/${reward.items?.at(0)._tpl}-base-image.webp`;
+                return `https://assets.tarkov.dev/${reward.items?.at(0)._tpl}-grid-image.webp`;
             case "AssortmentUnlock":
                 return "https://cdn-icons-png.flaticon.com/512/636/636014.png";
             case "ProductionScheme":
@@ -52,7 +64,7 @@ export const rewardTemplate = (
             case "StashRows":
                 return "";
             case "Achievement":
-                return "";
+                return "https://png.pngtree.com/png-vector/20230412/ourmid/pngtree-achievement-line-icon-vector-png-image_6703004.png";
             default:
                 return "";
         }
@@ -61,7 +73,7 @@ export const rewardTemplate = (
     const getTitle = (reward: IQuestReward): string => {
         switch (reward.type) {
             case "Skill":
-                return "";
+                return reward.target!;
             case "Experience":
                 return `${reward.value} EXP`;
             case "TraderStanding":
@@ -79,9 +91,9 @@ export const rewardTemplate = (
             case "TraderStandingRestore":
                 return traders[reward.target!];
             case "StashRows":
-                return "";
+                return "Stash Rows";
             case "Achievement":
-                return "";
+                return locales[`${reward.target} name`];
             default:
                 return "";
         }
@@ -96,7 +108,7 @@ export const rewardTemplate = (
                 )}
             >
                 <img
-                    className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
+                    className="w-9 sm:w-16rem xl:w-10rem block xl:block mx-auto"
                     style={{ maxHeight: "5rem", maxWidth: "5rem", objectFit: "contain" }}
                     src={getImage(reward)}
                     alt={reward.type}
@@ -128,11 +140,19 @@ export const rewardTemplate = (
                         <span className="text-2xl font-semibold">
                             {reward.value ? reward.value : "\u00A0"}
                         </span>
-                        <Button
-                            icon="pi pi-minus-circle"
-                            severity="danger"
-                            className="p-button-rounded"
-                        />
+                        <div>
+                            <Button
+                                icon="pi pi-plus-circle"
+                                severity="success"
+                                className="p-button-rounded"
+                                onClick={() => showRewardEditor(reward, rewardEventType)}
+                            />
+                            <Button
+                                icon="pi pi-minus-circle"
+                                severity="danger"
+                                className="p-button-rounded"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

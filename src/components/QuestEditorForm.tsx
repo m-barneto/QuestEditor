@@ -1,5 +1,5 @@
 import { FC, useContext, useEffect, useState } from "react";
-import { IQuest } from "../types/models/eft/common/tables/IQuest";
+import { IQuest, IQuestReward } from "../types/models/eft/common/tables/IQuest";
 import { Divider } from "primereact/divider";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
@@ -32,7 +32,7 @@ interface ErrorMessages {
     Location?: string;
 }
 
-enum RewardEvent {
+export enum RewardEvent {
     STARTED,
     SUCCESS,
     FAIL,
@@ -58,6 +58,7 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
     const [sideExclusive, setSideExclusive] = useState<string>("Both");
     const [rewardFormVisible, setRewardFormVisible] = useState<boolean>(false);
     const [selectedRewardEvent, setSelectedRewardEvent] = useState<RewardEvent>(RewardEvent.NONE);
+    const [selectedReward, setSelectedReward] = useState<IQuestReward | undefined>(undefined);
 
     //const [ formValid, setFormValid] = useState<boolean>(true);
 
@@ -163,6 +164,12 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
             default:
                 return undefined;
         }
+    };
+
+    const showRewardEditor = (reward: IQuestReward, rewardEventType: RewardEvent) => {
+        setSelectedReward(reward);
+        setSelectedRewardEvent(rewardEventType);
+        setRewardFormVisible(true);
     };
 
     return (
@@ -439,7 +446,7 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
                             header={rewardDialogHeader}
                             footer={rewardDialogFooter}
                         >
-                            <RewardForm rewards={getSelectedRewardsList()!}></RewardForm>
+                            <RewardForm existingReward={selectedReward}></RewardForm>
                         </Dialog>
                         <Accordion
                             style={{ paddingTop: "1rem", paddingBottom: "1rem" }}
@@ -456,6 +463,7 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
                                     tooltip="Add Reward"
                                     raised
                                     onClick={() => {
+                                        setSelectedReward(undefined);
                                         setSelectedRewardEvent(RewardEvent.STARTED);
                                         setRewardFormVisible(true);
                                     }}
@@ -463,7 +471,11 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
                                     &nbsp;&nbsp;Add Reward
                                 </Button>
 
-                                <RewardList rewards={quest.rewards.Started} />
+                                <RewardList
+                                    rewards={quest.rewards.Started}
+                                    rewardEventType={RewardEvent.STARTED}
+                                    showRewardEditor={showRewardEditor}
+                                />
                             </AccordionTab>
                             <AccordionTab header="Success">
                                 <Button
@@ -472,13 +484,18 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
                                     tooltip="Add Reward"
                                     raised
                                     onClick={() => {
+                                        setSelectedReward(undefined);
                                         setSelectedRewardEvent(RewardEvent.SUCCESS);
                                         setRewardFormVisible(true);
                                     }}
                                 >
                                     &nbsp;&nbsp;Add Reward
                                 </Button>
-                                <RewardList rewards={quest.rewards.Success} />
+                                <RewardList
+                                    rewards={quest.rewards.Success}
+                                    rewardEventType={RewardEvent.SUCCESS}
+                                    showRewardEditor={showRewardEditor}
+                                />
                             </AccordionTab>
                             <AccordionTab header="Fail">
                                 <Button
@@ -487,13 +504,18 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
                                     tooltip="Add Reward"
                                     raised
                                     onClick={() => {
+                                        setSelectedReward(undefined);
                                         setSelectedRewardEvent(RewardEvent.FAIL);
                                         setRewardFormVisible(true);
                                     }}
                                 >
                                     &nbsp;&nbsp;Add Reward
                                 </Button>
-                                <RewardList rewards={quest.rewards.Fail} />
+                                <RewardList
+                                    rewards={quest.rewards.Fail}
+                                    rewardEventType={RewardEvent.FAIL}
+                                    showRewardEditor={showRewardEditor}
+                                />
                             </AccordionTab>
                         </Accordion>
                     </TabPanel>
