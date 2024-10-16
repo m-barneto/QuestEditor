@@ -14,6 +14,7 @@ import { LocaleProvider } from "./contexts/LocaleContext";
 import { UserLayoutProvider } from "./contexts/UserLayoutContext";
 import { useState } from "react";
 import { TraderProvider } from "./contexts/TraderContext";
+import { ItemsProvider } from "./contexts/ItemsContext";
 
 const App: React.FC = () => {
     return (
@@ -22,19 +23,21 @@ const App: React.FC = () => {
                 <QuestDataProvider>
                     <LocaleProvider>
                         <TraderProvider>
-                            <SelectedQuestProvider>
-                                <QuestListboxProvider>
-                                    <QuestEditorHeader />
-                                    <Splitter>
-                                        <SplitterPanel className="flex flex-row" size={15}>
-                                            <QuestListView />
-                                        </SplitterPanel>
-                                        <SplitterPanel minSize={60}>
-                                            <QuestEditorView />
-                                        </SplitterPanel>
-                                    </Splitter>
-                                </QuestListboxProvider>
-                            </SelectedQuestProvider>
+                            <ItemsProvider>
+                                <SelectedQuestProvider>
+                                    <QuestListboxProvider>
+                                        <QuestEditorHeader />
+                                        <Splitter>
+                                            <SplitterPanel className="flex flex-row" size={15}>
+                                                <QuestListView />
+                                            </SplitterPanel>
+                                            <SplitterPanel minSize={60}>
+                                                <QuestEditorView />
+                                            </SplitterPanel>
+                                        </Splitter>
+                                    </QuestListboxProvider>
+                                </SelectedQuestProvider>
+                            </ItemsProvider>
                         </TraderProvider>
                     </LocaleProvider>
                 </QuestDataProvider>

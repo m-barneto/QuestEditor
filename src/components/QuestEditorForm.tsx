@@ -125,32 +125,6 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
         }
     }
 
-    const rewardDialogFooter = (
-        <div>
-            <Button
-                icon="pi pi-minus-circle"
-                severity="danger"
-                tooltip="Cancel"
-                raised
-                onClick={() => setRewardFormVisible(false)}
-            >
-                &nbsp;&nbsp;Cancel
-            </Button>
-            <Button
-                icon="pi pi-plus-circle"
-                severity="success"
-                tooltip="Submit"
-                raised
-                onClick={() => {
-                    setRewardFormVisible(false);
-                    // Submit reward entry to quest
-                }}
-            >
-                &nbsp;&nbsp;Submit
-            </Button>
-        </div>
-    );
-
     const rewardDialogHeader = <span>Add Reward</span>;
 
     const getSelectedRewardsList = () => {
@@ -444,9 +418,12 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
                                 setRewardFormVisible(false);
                             }}
                             header={rewardDialogHeader}
-                            footer={rewardDialogFooter}
                         >
-                            <RewardForm existingReward={selectedReward}></RewardForm>
+                            <RewardForm
+                                existingReward={selectedReward}
+                                rewardEventType={selectedRewardEvent}
+                                setRewardFormVisible={setRewardFormVisible}
+                            ></RewardForm>
                         </Dialog>
                         <Accordion
                             style={{ paddingTop: "1rem", paddingBottom: "1rem" }}
