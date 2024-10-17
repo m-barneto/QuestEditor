@@ -17,8 +17,7 @@ import { LocaleContext } from "../contexts/LocaleContext";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { UserLayoutContext } from "../contexts/UserLayoutContext";
 import { Checkbox } from "primereact/checkbox";
-import { DataView, DataViewLayoutOptions } from "primereact/dataview";
-import { listTemplate, RewardList, rewardTemplate } from "./RewardTemplate";
+import { RewardList } from "./RewardTemplate";
 import { Dialog } from "primereact/dialog";
 import { RewardForm } from "./RewardForm";
 
@@ -126,19 +125,6 @@ export const QuestEditorForm: FC<QuestEditorFormProps> = (props): JSX.Element =>
     }
 
     const rewardDialogHeader = <span>Add Reward</span>;
-
-    const getSelectedRewardsList = () => {
-        switch (selectedRewardEvent) {
-            case RewardEvent.STARTED:
-                return quest?.rewards.Started;
-            case RewardEvent.SUCCESS:
-                return quest?.rewards.Success;
-            case RewardEvent.FAIL:
-                return quest?.rewards.Fail;
-            default:
-                return undefined;
-        }
-    };
 
     const showRewardEditor = (reward: IQuestReward, rewardEventType: RewardEvent) => {
         setSelectedReward(reward);

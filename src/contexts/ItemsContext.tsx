@@ -4,7 +4,10 @@ import { ITemplateItem } from "../types/models/eft/common/tables/ITemplateItem";
 import itemsJson from "../data/items.json";
 import { LocaleContext } from "./LocaleContext";
 
-const itemsData: Record<string, ITemplateItem> = itemsJson;
+const itemsData: Record<string, ITemplateItem> = itemsJson as unknown as Record<
+    string,
+    ITemplateItem
+>;
 
 interface ItemInfo {
     id: string;

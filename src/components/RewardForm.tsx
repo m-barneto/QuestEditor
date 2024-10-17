@@ -1,5 +1,4 @@
 import { FC, useContext, useEffect, useState } from "react";
-import { LocaleContext } from "../contexts/LocaleContext";
 import { TraderContext } from "../contexts/TraderContext";
 import { IQuestReward } from "../types/models/eft/common/tables/IQuest";
 import { CreateEmptyReward } from "../utils/RewardHelper";
@@ -9,14 +8,12 @@ import { FloatLabel } from "primereact/floatlabel";
 import { QuestRewardType, RewardType } from "../utils/RewardEnums";
 import { ScrollPanel } from "primereact/scrollpanel";
 import ObjectId from "bson-objectid";
-import { InputText } from "primereact/inputtext";
 import { InputNumber } from "primereact/inputnumber";
 import { QuestDataContext } from "../contexts/QuestDataContext";
 import { SelectedQuestContext } from "../contexts/SelectedQuestContext";
 import { RewardEvent } from "./QuestEditorForm";
-import { Divider } from "primereact/divider";
-import { ITemplateItem } from "../types/models/eft/common/tables/ITemplateItem";
 import { ItemsContext } from "../contexts/ItemsContext";
+import { Checkbox } from "primereact/checkbox";
 
 interface RewardFormProps {
     existingReward?: IQuestReward | undefined;
@@ -25,29 +22,45 @@ interface RewardFormProps {
 }
 
 export const RewardForm: FC<RewardFormProps> = (props): JSX.Element => {
-    const { locales } = useContext(LocaleContext)!;
+    //const { locales } = useContext(LocaleContext)!;
     const { traders } = useContext(TraderContext)!;
-    const { quests } = useContext(QuestDataContext)!;
-    const { items, itemIdToName } = useContext(ItemsContext)!;
+    const { quests, setQuests } = useContext(QuestDataContext)!;
+    const { itemIdToName } = useContext(ItemsContext)!;
     const { selectedQuestId } = useContext(SelectedQuestContext)!;
     const [copyTooltip, setCopyTooltip] = useState<string>("Copy Reward MongoID");
     const [reward, setReward] = useState<IQuestReward | undefined>(
         structuredClone(props.existingReward)
     );
+    const [prevRewardType, setPrevRewardType] = useState<string | undefined>(
+        props.existingReward ? props.existingReward.type : undefined
+    );
 
     useEffect(() => {
-        // if reward is undefined, set it up to be of type item with the genreated shit, otherwise just have it be what was given and do nothing
-        console.log("Type changed!");
-        console.log(itemIdToName);
-        if (!reward) {
-            //setReward(CreateEmptyReward());
-            console.log("IT WAS UNDEFINED");
-            return;
-        }
         const r = CreateEmptyReward();
-        r.id = reward.id;
-        r.type = reward.type;
-        switch (reward.type) {
+        // if reward is undefined, set it up to be of type item with the genreated shit, otherwise just have it be what was given and do nothing
+        if (reward) {
+            // it was defined, if prevtype is undefined, do nothing except set prevstype to this reward type
+            if (prevRewardType == undefined) {
+                setPrevRewardType(reward.type);
+                return;
+            } else {
+                // prev type is defined, if its the same as this reward type, do nothing
+                if (prevRewardType == reward.type) {
+                    console.log("Had same type as previous, returning and doing nothing");
+                    return;
+                } else {
+                    console.log("Creating new reward object with reward already defined!");
+                    r.id = reward.id;
+                    r.type = reward.type;
+                    setPrevRewardType(r.type);
+                }
+            }
+        } else {
+            console.log("Wasnt defined or type changed, create new one");
+        }
+
+        const mongoId = new ObjectId().toHexString();
+        switch (r.type) {
             case RewardType.ACHIEVEMENT:
                 break;
             case RewardType.ASSORTMENT_UNLOCK: {
@@ -55,13 +68,19 @@ export const RewardForm: FC<RewardFormProps> = (props): JSX.Element => {
                 r.traderId = Object.keys(traders!).at(0);
                 r.loyaltyLevel = 1;
                 r.items = [];
+                r.items.push({
+                    _id: mongoId,
+                    _tpl: "544fb25a4bdc2dfb738b4567",
+                    upd: {
+                        StackObjectsCount: r.value,
+                    },
+                });
                 break;
             }
             case RewardType.EXPERIENCE:
                 r.value = 1;
                 break;
             case RewardType.ITEM: {
-                const mongoId = new ObjectId().toHexString();
                 r.items = [];
                 r.value = 1;
                 r.items.push({
@@ -93,45 +112,57 @@ export const RewardForm: FC<RewardFormProps> = (props): JSX.Element => {
                 break;
         }
         setReward(r);
-        console.log("Currently selected quest");
-        console.log("Event type: " + RewardEvent[props.rewardEventType]);
-        console.log(quests![selectedQuestId!]);
     }, [reward?.type]);
 
     function addRewardToQuest(): boolean {
         if (!quests || !selectedQuestId) return false;
+        const questCopy = structuredClone(quests[selectedQuestId]);
         let rewards = undefined;
         switch (props.rewardEventType) {
             case RewardEvent.STARTED:
-                rewards = quests[selectedQuestId].rewards.Started;
+                rewards = questCopy.rewards.Started;
                 break;
             case RewardEvent.SUCCESS:
-                rewards = quests[selectedQuestId].rewards.Success;
+                rewards = questCopy.rewards.Success;
                 break;
             case RewardEvent.FAIL:
-                rewards = quests[selectedQuestId].rewards.Fail;
+                rewards = questCopy.rewards.Fail;
                 break;
         }
         if (!rewards) return false;
 
         // Find valid index for our reward
         const r = structuredClone(reward!);
-        let maxIndex = 0;
-        for (const i in rewards) {
-            const j = rewards[i];
-            if (j.index >= maxIndex) {
-                maxIndex = j.index + 1;
+
+        let existing: boolean = false;
+        rewards.forEach((reward, index, array) => {
+            if (reward.id == r.id) {
+                existing = true;
+                array[index] = r;
             }
+        });
+
+        if (!existing) {
+            let maxIndex = 0;
+            for (const i in rewards) {
+                const j = rewards[i];
+                if (j.index >= maxIndex) {
+                    maxIndex = j.index + 1;
+                }
+            }
+            r.index = maxIndex;
+            rewards.push(r);
         }
-        r.index = maxIndex;
-        console.log("Found index " + maxIndex);
-        rewards.push(r);
+        // when we update the quest, we want to forward those changes to the context
+        const questsCopy = structuredClone(quests);
+        questsCopy[selectedQuestId] = questCopy;
+        setQuests(questsCopy);
         return true;
     }
 
     return (
         <>
-            <ScrollPanel style={{ width: "100%", minHeight: "30rem" }}>
+            <ScrollPanel style={{ minHeight: "30rem" }}>
                 {reward && (
                     <>
                         <div className="flex flex-direction-row" style={{ paddingTop: "1.5rem" }}>
@@ -154,6 +185,7 @@ export const RewardForm: FC<RewardFormProps> = (props): JSX.Element => {
                             </div>
                             <div>
                                 <Button
+                                    className="mr-2"
                                     icon="pi pi-tag"
                                     severity="help"
                                     raised
@@ -169,65 +201,87 @@ export const RewardForm: FC<RewardFormProps> = (props): JSX.Element => {
                                 />
                             </div>
                             <div className="col flex-grow-1" />
-                            {reward.value !== undefined && (
-                                <FloatLabel>
-                                    <InputNumber
-                                        inputId="value"
-                                        value={parseFloat(reward.value!.toString()) as number}
-                                        onValueChange={(e) => {
-                                            if (reward.type == "Item") {
+                            <div>
+                                {reward.value !== undefined && (
+                                    <FloatLabel>
+                                        <InputNumber
+                                            inputClassName="w-4rem mr-2"
+                                            inputId="value"
+                                            value={parseFloat(reward.value!.toString()) as number}
+                                            onValueChange={(e) => {
+                                                if (reward.type == "Item") {
+                                                    const item = reward.items![0];
+                                                    item.upd.StackObjectsCount = e.target.value
+                                                        ? e.target.value
+                                                        : 1;
+                                                    setReward({
+                                                        ...reward,
+                                                        value: e.target.value ? e.target.value : 1,
+                                                        items: [item],
+                                                    });
+                                                } else {
+                                                    setReward({
+                                                        ...reward,
+                                                        value: e.target.value ? e.target.value : 1,
+                                                    });
+                                                }
+                                            }}
+                                            useGrouping={false}
+                                        />
+                                        <label htmlFor="value">Amount</label>
+                                    </FloatLabel>
+                                )}
+                            </div>
+                            <div>
+                                {reward.items !== undefined && (
+                                    <FloatLabel>
+                                        <Dropdown
+                                            inputId="item"
+                                            options={Object.values(itemIdToName!)}
+                                            optionValue="id"
+                                            optionLabel="name"
+                                            editable
+                                            virtualScrollerOptions={{ itemSize: 38 }}
+                                            className="w-full md:w-14rem"
+                                            value={reward.items[0]._tpl}
+                                            onChange={(e) => {
                                                 const item = reward.items![0];
-                                                item.upd.StackObjectsCount = e.target.value
+                                                item._tpl = e.target.value
                                                     ? e.target.value
-                                                    : 1;
+                                                    : "544fb25a4bdc2dfb738b4567";
                                                 setReward({
                                                     ...reward,
-                                                    value: e.target.value ? e.target.value : 1,
                                                     items: [item],
                                                 });
-                                            } else {
-                                                setReward({
-                                                    ...reward,
-                                                    value: e.target.value ? e.target.value : 1,
-                                                });
-                                            }
-                                        }}
-                                        useGrouping={false}
-                                    />
-                                    <label htmlFor="value">Amount</label>
-                                </FloatLabel>
-                            )}
-                            {reward.items !== undefined && (
-                                <FloatLabel>
-                                    <Dropdown
-                                        inputId="item"
-                                        options={Object.values(itemIdToName!)}
-                                        optionValue="id"
-                                        optionLabel="name"
-                                        editable
-                                        virtualScrollerOptions={{ itemSize: 38 }}
-                                        className="w-full md:w-14rem"
-                                        value={reward.items[0]._tpl}
-                                        onChange={(e) => {
-                                            const item = reward.items![0];
-                                            item._tpl = e.target.value
-                                                ? e.target.value
-                                                : "544fb25a4bdc2dfb738b4567";
-                                            setReward({
-                                                ...reward,
-                                                items: [item],
-                                            });
-                                        }}
-                                    />
-                                    <label htmlFor="item">Item</label>
-                                </FloatLabel>
-                            )}
+                                            }}
+                                        />
+                                        <label htmlFor="item">Item</label>
+                                    </FloatLabel>
+                                )}
+                            </div>
                         </div>
 
-                        <div
-                            className="flex flex-direction-row"
-                            style={{ paddingTop: "1rem" }}
-                        ></div>
+                        <div className="flex flex-direction-row" style={{ paddingTop: "1rem" }}>
+                            <div className="col flex-grow-1" />
+                            <div>
+                                {reward.findInRaid !== undefined && (
+                                    <>
+                                        <Checkbox
+                                            checked={reward.findInRaid}
+                                            inputId="foundinraid"
+                                            style={{ marginRight: ".5rem" }}
+                                            onChange={(e) => {
+                                                setReward({
+                                                    ...reward,
+                                                    findInRaid: e.checked,
+                                                });
+                                            }}
+                                        />
+                                        <label htmlFor="foundinraid">Found In Raid</label>
+                                    </>
+                                )}
+                            </div>
+                        </div>
                     </>
                 )}
             </ScrollPanel>

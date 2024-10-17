@@ -1,8 +1,8 @@
-import React, { useContext } from 'react'
-import { SelectedQuestContext } from '../contexts/SelectedQuestContext';
-import { QuestEditorForm } from './QuestEditorForm';
-import { ScrollPanel } from 'primereact/scrollpanel';
-import { QuestDataContext } from '../contexts/QuestDataContext';
+import { useContext } from "react";
+import { SelectedQuestContext } from "../contexts/SelectedQuestContext";
+import { QuestEditorForm } from "./QuestEditorForm";
+import { ScrollPanel } from "primereact/scrollpanel";
+import { QuestDataContext } from "../contexts/QuestDataContext";
 
 export default function QuestEditorView() {
     const { selectedQuestId } = useContext(SelectedQuestContext)!;
@@ -10,9 +10,13 @@ export default function QuestEditorView() {
 
     return (
         <ScrollPanel style={{ width: "100%" }}>
-            {quests && selectedQuestId && 
-            <QuestEditorForm key={selectedQuestId} initialQuestData={selectedQuestId} questname={quests[selectedQuestId!].QuestName!}/>
-            }
+            {quests && selectedQuestId && (
+                <QuestEditorForm
+                    key={selectedQuestId}
+                    initialQuestData={selectedQuestId}
+                    questname={quests[selectedQuestId!].QuestName!}
+                />
+            )}
         </ScrollPanel>
-    )
+    );
 }
