@@ -14,6 +14,7 @@ import { SelectedQuestContext } from "../contexts/SelectedQuestContext";
 import { RewardEvent } from "./QuestEditorForm";
 import { ItemsContext } from "../contexts/ItemsContext";
 import { Checkbox } from "primereact/checkbox";
+import { Traders } from "../utils/QuestEnums";
 
 interface RewardFormProps {
     existingReward?: IQuestReward | undefined;
@@ -61,8 +62,10 @@ export const RewardForm: FC<RewardFormProps> = (props): JSX.Element => {
 
         const mongoId = new ObjectId().toHexString();
         switch (r.type) {
-            case RewardType.ACHIEVEMENT:
+            case RewardType.ACHIEVEMENT: {
+                r.target = "";
                 break;
+            }
             case RewardType.ASSORTMENT_UNLOCK: {
                 // Set the default target trader to the first one in our list (Should be the custom trader added.)
                 r.traderId = Object.keys(traders!).at(0);
@@ -96,20 +99,35 @@ export const RewardForm: FC<RewardFormProps> = (props): JSX.Element => {
 
                 break;
             }
-            case RewardType.PRODUCTIONS_SCHEME:
+            case RewardType.PRODUCTIONS_SCHEME: {
+                r.target = "";
                 break;
-            case RewardType.SKILL:
+            }
+            case RewardType.SKILL: {
+                r.target = "AimDrills";
+                r.value = 1;
                 break;
-            case RewardType.STASH_ROWS:
+            }
+            case RewardType.STASH_ROWS: {
                 break;
-            case RewardType.TRADER_STANDING:
+            }
+            case RewardType.TRADER_STANDING: {
+                r.target = Traders[0].id;
+                r.value = 0.01;
                 break;
-            case RewardType.TRADER_STANDING_RESET:
+            }
+            case RewardType.TRADER_STANDING_RESET: {
                 break;
-            case RewardType.TRADER_STANDING_RESTORE:
+            }
+            case RewardType.TRADER_STANDING_RESTORE: {
+                r.target = Traders[0].id;
+                r.value = 0.01;
                 break;
-            case RewardType.TRADER_UNLOCK:
+            }
+            case RewardType.TRADER_UNLOCK: {
+                r.target = Traders[0].id;
                 break;
+            }
         }
         setReward(r);
     }, [reward?.type]);
@@ -202,7 +220,7 @@ export const RewardForm: FC<RewardFormProps> = (props): JSX.Element => {
                             </div>
                             <div className="col flex-grow-1" />
                             <div>
-                                {reward.value !== undefined && (
+                                {reward.value !== undefined && typeof reward.value === "number" && (
                                     <FloatLabel>
                                         <InputNumber
                                             inputClassName="w-4rem mr-2"
@@ -229,6 +247,23 @@ export const RewardForm: FC<RewardFormProps> = (props): JSX.Element => {
                                             useGrouping={false}
                                         />
                                         <label htmlFor="value">Amount</label>
+                                    </FloatLabel>
+                                )}
+                                {reward.value !== undefined && typeof reward.value === "string" && (
+                                    <FloatLabel>
+                                        <Dropdown
+                                            inputId="target"
+                                            className={`w-12rem mr-2`}
+                                            value={reward.target}
+                                            onChange={(e) =>
+                                                setReward({ ...reward, target: e.target.value })
+                                            }
+                                            options={Object.values([])}
+                                            optionLabel="name"
+                                            optionValue="name"
+                                            autoComplete="off"
+                                        />
+                                        <label htmlFor="rewardtype">Reward Type</label>
                                     </FloatLabel>
                                 )}
                             </div>
